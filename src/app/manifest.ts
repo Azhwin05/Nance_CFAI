@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Clickfield OS",
-    short_name: "Clickfield",
+    name: "Nance",
+    short_name: "Nance",
     description:
       "Internal finance, client, project & operations platform for Clickfield AI.",
     start_url: "/dashboard",

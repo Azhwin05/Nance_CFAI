@@ -1,5 +1,5 @@
 /**
- * Role & permission model for Clickfield OS.
+ * Role & permission model for Nance.
  *
  * This is the single source of truth used by the UI to show/hide actions.
  * It is MIRRORED (not replaced) by server-side checks and Postgres RLS.

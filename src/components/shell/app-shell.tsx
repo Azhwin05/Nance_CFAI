@@ -39,7 +39,7 @@ function pageTitle(pathname: string): string {
     }
   }
   if (pathname.startsWith("/more")) return "More"
-  return "Clickfield OS"
+  return "Nance"
 }
 
 function NavLink({

@@ -11,7 +11,7 @@ export function SetupNotice() {
       </CardHeader>
       <CardContent className="space-y-3 text-sm text-muted-foreground">
         <p>
-          Clickfield OS isn&apos;t connected to a Supabase project yet. To bring
+          Nance isn&apos;t connected to a Supabase project yet. To bring
           it online:
         </p>
         <ol className="list-decimal space-y-1 pl-5">

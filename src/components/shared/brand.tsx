@@ -9,7 +9,7 @@ export function BrandMark({ className }: { className?: string }) {
       )}
       aria-hidden
     >
-      C
+      N
     </div>
   )
 }
@@ -19,7 +19,7 @@ export function BrandWordmark({ className }: { className?: string }) {
     <div className={cn("flex items-center gap-2", className)}>
       <BrandMark />
       <div className="leading-tight">
-        <div className="font-semibold tracking-tight">Clickfield OS</div>
+        <div className="font-semibold tracking-tight">Nance</div>
       </div>
     </div>
   )

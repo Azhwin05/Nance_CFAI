@@ -26,7 +26,7 @@ export default async function DashboardPage() {
           {greeting()}, {user?.fullName.split(" ")[0] ?? "there"}
         </h2>
         <p className="text-sm text-muted-foreground">
-          Here&apos;s what&apos;s happening with Clickfield.
+          Here&apos;s what&apos;s happening with Nance.
         </p>
       </div>
 

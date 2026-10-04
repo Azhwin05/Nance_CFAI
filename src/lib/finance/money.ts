@@ -1,5 +1,5 @@
 /**
- * Money handling for Clickfield OS.
+ * Money handling for Nance.
  *
  * Rules:
  *  - The database stores amounts as NUMERIC(14,2). We represent money in the

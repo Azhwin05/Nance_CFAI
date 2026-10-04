@@ -17,17 +17,17 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Clickfield OS",
-    template: "%s · Clickfield OS",
+    default: "Nance",
+    template: "%s · Nance",
   },
   description:
     "Internal finance, client, project & operations platform for Clickfield AI.",
-  applicationName: "Clickfield OS",
+  applicationName: "Nance",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Clickfield",
+    title: "Nance",
   },
 }
 
