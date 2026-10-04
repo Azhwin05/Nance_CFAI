@@ -1,15 +1,22 @@
 import type { Metadata } from "next"
-import { ComingSoon } from "@/components/shared/coming-soon"
+import { requirePermission } from "@/lib/auth/session"
+import { getReportBundle } from "@/lib/reports"
+import { PageHeader } from "@/components/shared/page-header"
+import { ReportsView } from "@/components/reports/reports-view"
 
 export const metadata: Metadata = { title: "Reports" }
 
-export default function Page() {
+export default async function ReportsPage() {
+  await requirePermission("reports.view")
+  const bundle = await getReportBundle(12)
+
   return (
-    <ComingSoon
-      title="Reports"
-      description="Revenue, expense, profit and MRR reports."
-      phase="Phase 7"
-      icon="BarChart3"
-    />
+    <div>
+      <PageHeader
+        title="Reports"
+        description="Revenue, expenses, profit, MRR, receivables and project profitability — filter, search and export."
+      />
+      <ReportsView bundle={bundle} />
+    </div>
   )
 }

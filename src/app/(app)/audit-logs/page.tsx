@@ -1,15 +1,22 @@
 import type { Metadata } from "next"
-import { ComingSoon } from "@/components/shared/coming-soon"
+import { requirePermission } from "@/lib/auth/session"
+import { listAuditLogs } from "@/lib/audit"
+import { PageHeader } from "@/components/shared/page-header"
+import { AuditViewer } from "@/components/audit/audit-viewer"
 
 export const metadata: Metadata = { title: "Audit Logs" }
 
-export default function Page() {
+export default async function AuditLogsPage() {
+  await requirePermission("audit.view")
+  const rows = await listAuditLogs()
+
   return (
-    <ComingSoon
-      title="Audit Logs"
-      description="Immutable trail of important actions."
-      phase="Phase 9"
-      icon="ScrollText"
-    />
+    <div>
+      <PageHeader
+        title="Audit Logs"
+        description="An immutable trail of important actions — who did what, and when."
+      />
+      <AuditViewer rows={rows} />
+    </div>
   )
 }

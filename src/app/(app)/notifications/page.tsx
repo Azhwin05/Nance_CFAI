@@ -1,10 +1,19 @@
 import type { Metadata } from "next"
-import { ComingSoon } from "@/components/shared/coming-soon"
+import { requireUser } from "@/lib/auth/session"
+import { listNotifications } from "@/lib/notifications"
+import { PageHeader } from "@/components/shared/page-header"
+import { NotificationList } from "@/components/notifications/notification-list"
 
 export const metadata: Metadata = { title: "Notifications" }
 
-export default function Page() {
+export default async function NotificationsPage() {
+  await requireUser()
+  const rows = await listNotifications()
+
   return (
-    <ComingSoon title="Notifications" description="Your in-app alerts." phase="Phase 6" icon="Bell" />
+    <div>
+      <PageHeader title="Notifications" description="Your in-app alerts." />
+      <NotificationList rows={rows} />
+    </div>
   )
 }
