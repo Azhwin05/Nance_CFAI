@@ -1,9 +1,7 @@
-import type { Metadata } from "next"
-import { requirePermission } from "@/lib/auth/session"
-import { listPayments } from "@/lib/finance/invoices"
-import { PageHeader } from "@/components/shared/page-header"
-import { EmptyState } from "@/components/shared/empty-state"
-import { Card } from "@/components/ui/card"
+"use client"
+
+import * as React from "react"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -12,9 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { EmptyState } from "@/components/shared/empty-state"
 import { formatMoney, paiseFromDb } from "@/lib/finance/money"
-
-export const metadata: Metadata = { title: "Payments" }
+import { INCOME_TYPE_LABELS } from "@/lib/validation/income"
+import type { IncomeListRow } from "@/lib/finance/income"
 
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString("en-IN", {
@@ -24,21 +25,30 @@ function fmtDate(d: string) {
   })
 }
 
-export default async function PaymentsPage() {
-  await requirePermission("payments.view")
-  const rows = await listPayments()
+export function IncomeList({ rows }: { rows: IncomeListRow[] }) {
+  const [q, setQ] = React.useState("")
+  const filtered = rows.filter((r) => {
+    if (!q) return true
+    const hay = `${r.client?.company_name ?? ""} ${r.project?.name ?? ""} ${
+      r.reference ?? ""
+    } ${r.code ?? ""} ${r.description ?? ""}`.toLowerCase()
+    return hay.includes(q.toLowerCase())
+  })
 
   return (
-    <div>
-      <PageHeader
-        title="Payments"
-        description="Payments received against invoices."
+    <div className="space-y-4">
+      <Input
+        placeholder="Search client, project, reference…"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        className="sm:max-w-xs"
       />
-      {rows.length === 0 ? (
+
+      {filtered.length === 0 ? (
         <EmptyState
-          icon="CreditCard"
-          title="No payments yet"
-          description="Payments recorded against invoices appear here."
+          icon="TrendingUp"
+          title="No income recorded"
+          description="Record money received from clients to see it here."
         />
       ) : (
         <>
@@ -46,31 +56,31 @@ export default async function PaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Invoice</TableHead>
+                  <TableHead>Code</TableHead>
                   <TableHead>Client</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead>Reference</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Date</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((r) => (
+                {filtered.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="text-muted-foreground">
-                      {fmtDate(r.paid_on)}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {r.invoice?.number ?? "—"}
-                    </TableCell>
+                    <TableCell className="font-mono text-xs">{r.code}</TableCell>
                     <TableCell className="font-medium">
                       {r.client?.company_name ?? "—"}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {r.method?.name ?? "—"}
+                      {r.project?.name ?? "—"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {INCOME_TYPE_LABELS[r.income_type] ?? r.income_type}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {r.reference ?? "—"}
+                      {fmtDate(r.txn_date)}
                     </TableCell>
                     <TableCell className="text-right font-medium tabular-nums text-emerald-600 dark:text-emerald-400">
                       {formatMoney(paiseFromDb(r.amount))}
@@ -82,7 +92,7 @@ export default async function PaymentsPage() {
           </div>
 
           <div className="grid gap-2 md:hidden">
-            {rows.map((r) => (
+            {filtered.map((r) => (
               <Card key={r.id} className="p-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
@@ -90,10 +100,13 @@ export default async function PaymentsPage() {
                       {r.client?.company_name ?? "—"}
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
-                      {r.invoice?.number ?? "—"} · {fmtDate(r.paid_on)}
+                      {r.project?.name ?? "—"} · {fmtDate(r.txn_date)}
                     </div>
+                    <Badge variant="secondary" className="mt-1">
+                      {INCOME_TYPE_LABELS[r.income_type] ?? r.income_type}
+                    </Badge>
                   </div>
-                  <div className="shrink-0 font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+                  <div className="shrink-0 text-right font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
                     {formatMoney(paiseFromDb(r.amount))}
                   </div>
                 </div>
