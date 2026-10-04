@@ -24,17 +24,26 @@ const publicEnv = {
 
 function parsePublic() {
   const parsed = publicSchema.safeParse(publicEnv)
-  if (!parsed.success) {
-    // Provide a readable error early rather than a cryptic runtime crash.
-    const issues = parsed.error.issues
-      .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
-      .join("\n")
-    throw new Error(
-      `Invalid or missing public environment variables:\n${issues}\n` +
-        `Copy .env.example to .env.local and fill in your Supabase project values.`
+  if (parsed.success) return parsed.data
+
+  // Env isn't configured (e.g. a deploy without Supabase vars set yet). Rather
+  // than hard-crash the whole build/runtime, fall back to placeholder values so
+  // the app boots in preview mode — isSupabaseConfigured() returns false and
+  // the UI shows its "connect Supabase" setup notice. Set the real
+  // NEXT_PUBLIC_SUPABASE_* vars to enable live data.
+  const issues = parsed.error.issues
+    .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
+    .join("\n")
+  if (typeof console !== "undefined") {
+    console.warn(
+      `[Nance] Supabase env not configured — running in preview mode:\n${issues}`
     )
   }
-  return parsed.data
+  return {
+    NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co",
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key",
+    NEXT_PUBLIC_APP_NAME: publicEnv.NEXT_PUBLIC_APP_NAME || "Nance",
+  }
 }
 
 export const env = parsePublic()
