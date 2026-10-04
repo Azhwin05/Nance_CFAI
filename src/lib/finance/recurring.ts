@@ -1,5 +1,6 @@
 import "server-only"
 import { createClient } from "@/lib/supabase/server"
+import { isSupabaseConfigured } from "@/lib/supabase/config"
 import { addPaise, paiseFromDb, type Paise } from "@/lib/finance/money"
 import { monthlyEquivalent } from "@/lib/finance/recurrence"
 
@@ -34,6 +35,7 @@ export type RecurringExpenseRow = {
 }
 
 export async function listRecurringRevenues(): Promise<RecurringRevenueRow[]> {
+  if (!isSupabaseConfigured()) return []
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("recurring_revenues")
@@ -50,6 +52,7 @@ export async function listRecurringRevenues(): Promise<RecurringRevenueRow[]> {
 }
 
 export async function listRecurringExpenses(): Promise<RecurringExpenseRow[]> {
+  if (!isSupabaseConfigured()) return []
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("recurring_expenses")
@@ -96,6 +99,8 @@ export async function getMrrSummary(): Promise<MrrSummary> {
 }
 
 export async function getRecurringFormData() {
+  if (!isSupabaseConfigured())
+    return { clients: [], projects: [], categories: [] }
   const supabase = await createClient()
   const [clients, projects, categories] = await Promise.all([
     supabase.from("clients").select("id, company_name").order("company_name"),

@@ -1,5 +1,6 @@
 import "server-only"
 import { createClient } from "@/lib/supabase/server"
+import { isSupabaseConfigured } from "@/lib/supabase/config"
 
 export type AuditRow = {
   id: string
@@ -12,6 +13,7 @@ export type AuditRow = {
 }
 
 export async function listAuditLogs(limit = 300): Promise<AuditRow[]> {
+  if (!isSupabaseConfigured()) return []
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("audit_logs")

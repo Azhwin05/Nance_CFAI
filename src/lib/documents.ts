@@ -1,5 +1,6 @@
 import "server-only"
 import { createClient } from "@/lib/supabase/server"
+import { isSupabaseConfigured } from "@/lib/supabase/config"
 
 export type DocumentRow = {
   id: string
@@ -18,6 +19,7 @@ export type DocumentRow = {
 export { DOC_TYPE_LABELS, UPLOAD_DOC_TYPES } from "@/lib/documents-meta"
 
 export async function listDocuments(): Promise<DocumentRow[]> {
+  if (!isSupabaseConfigured()) return []
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("documents")
@@ -34,6 +36,7 @@ export async function listDocuments(): Promise<DocumentRow[]> {
 }
 
 export async function getDocumentFormData() {
+  if (!isSupabaseConfigured()) return { clients: [], projects: [] }
   const supabase = await createClient()
   const [clients, projects] = await Promise.all([
     supabase.from("clients").select("id, company_name").order("company_name"),
