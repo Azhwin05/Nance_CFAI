@@ -32,10 +32,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { title: "Overview", href: "/finance", icon: "Wallet", permission: "finance.view" },
       { title: "Income", href: "/finance/income", icon: "TrendingUp", permission: "income.view" },
       { title: "Expenses", href: "/finance/expenses", icon: "TrendingDown", permission: "expenses.view" },
-      { title: "Payments", href: "/finance/payments", icon: "CreditCard", permission: "payments.view" },
       { title: "Invoices", href: "/finance/invoices", icon: "FileText", permission: "invoices.view" },
       { title: "MRR", href: "/finance/mrr", icon: "Repeat", permission: "mrr.view" },
-      { title: "Recurring Expenses", href: "/finance/recurring", icon: "CalendarClock", permission: "expenses.view" },
     ],
   },
   {
@@ -66,7 +64,6 @@ export const MORE_NAV: NavItem[] = [
   { title: "Expenses", href: "/finance/expenses", icon: "TrendingDown", permission: "expenses.view" },
   { title: "Invoices", href: "/finance/invoices", icon: "FileText", permission: "invoices.view" },
   { title: "MRR", href: "/finance/mrr", icon: "Repeat", permission: "mrr.view" },
-  { title: "Recurring Expenses", href: "/finance/recurring", icon: "CalendarClock", permission: "expenses.view" },
   { title: "Documents", href: "/documents", icon: "FolderOpen", permission: "documents.view" },
   { title: "Reports", href: "/reports", icon: "BarChart3", permission: "reports.view" },
   { title: "Notifications", href: "/notifications", icon: "Bell" },

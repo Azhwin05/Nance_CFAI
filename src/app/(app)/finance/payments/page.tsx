@@ -1,8 +1,11 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { requirePermission } from "@/lib/auth/session"
 import { listPayments } from "@/lib/finance/invoices"
 import { PageHeader } from "@/components/shared/page-header"
 import { EmptyState } from "@/components/shared/empty-state"
+import { buttonVariants } from "@/components/ui/button"
+import { Icon } from "@/components/shared/icon"
 import { Card } from "@/components/ui/card"
 import {
   Table,
@@ -32,7 +35,16 @@ export default async function PaymentsPage() {
     <div>
       <PageHeader
         title="Payments"
-        description="Payments received against invoices."
+        description="Payments received against invoices. Each one is also recorded as income."
+        actions={
+          <Link
+            href="/finance/invoices"
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            <Icon name="FileText" className="size-4" />
+            Invoices
+          </Link>
+        }
       />
       {rows.length === 0 ? (
         <EmptyState

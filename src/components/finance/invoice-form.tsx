@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Select,
@@ -20,6 +21,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,13 +36,16 @@ import {
 const NONE = "__none__"
 type Client = { id: string; company_name: string }
 type Project = { id: string; name: string; client_id: string }
+type Method = { id: string; name: string }
 
 export function InvoiceForm({
   clients,
   projects,
+  methods = [],
 }: {
   clients: Client[]
   projects: Project[]
+  methods?: Method[]
 }) {
   const router = useRouter()
   const [pending, startTransition] = React.useTransition()
@@ -55,10 +60,14 @@ export function InvoiceForm({
       subtotal: "",
       tax: "",
       notes: "",
+      markPaid: false,
+      paidMethodId: null,
+      paidOn: new Date().toISOString().slice(0, 10),
     },
   })
 
   const selectedClient = form.watch("clientId")
+  const markPaid = form.watch("markPaid")
   const visibleProjects = selectedClient
     ? projects.filter((p) => p.client_id === selectedClient)
     : projects
@@ -213,6 +222,74 @@ export function InvoiceForm({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="markPaid"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>Already paid in full</FormLabel>
+                    <FormDescription>
+                      Records the payment and income now — revenue updates
+                      instantly. Leave off to collect later from the invoice.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value ?? false}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {markPaid && (
+              <div className="grid gap-5 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="paidOn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Paid on</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="paidMethodId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Payment method</FormLabel>
+                      <Select
+                        value={field.value ?? NONE}
+                        onValueChange={(v) => field.onChange(v === NONE ? null : v)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Not specified" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={NONE}>Not specified</SelectItem>
+                          {methods.map((m) => (
+                            <SelectItem key={m.id} value={m.id}>
+                              {m.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
 
             <div className="flex justify-end gap-2">
               <Button
