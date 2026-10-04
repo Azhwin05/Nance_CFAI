@@ -62,6 +62,60 @@ export async function createRecurringExpense(
   return { ok: true, id: data.id as string }
 }
 
+/** Edit an existing recurring expense (amount, dates, category, toggles…). */
+export async function updateRecurringExpense(
+  id: string,
+  input: RecurringExpenseInput
+): Promise<ActionResult> {
+  const user = await requireUser()
+  if (!can(user.roles, "recurring.manage")) {
+    return { error: "You don't have permission to manage recurring expenses." }
+  }
+  const parsed = recurringExpenseSchema.safeParse(input)
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" }
+  }
+  const v = parsed.data
+  const supabase = await createClient()
+  const amountPaise = paiseFromInput(v.amount)
+
+  const { data: before } = await supabase
+    .from("recurring_expenses")
+    .select("amount, next_due, frequency")
+    .eq("id", id)
+    .maybeSingle()
+
+  const { error } = await supabase
+    .from("recurring_expenses")
+    .update({
+      name: v.name,
+      vendor: v.vendor || null,
+      category_id: v.categoryId ?? null,
+      amount: Number(paiseToDb(amountPaise)),
+      frequency: v.frequency,
+      start_date: v.startDate,
+      end_date: v.endDate || null,
+      next_due: v.nextDue,
+      auto_create: v.autoCreate ?? true,
+      require_approval: v.requireApproval ?? true,
+    })
+    .eq("id", id)
+  if (error) return { error: error.message }
+
+  await supabase.rpc("write_audit", {
+    p_action: "recurring_expense.updated",
+    p_entity: "recurring_expenses",
+    p_entity_id: id,
+    p_summary: `${user.fullName} updated recurring expense "${v.name}" — ${formatMoney(amountPaise)} / ${v.frequency}, next due ${v.nextDue}`,
+    p_old: before ?? undefined,
+    p_new: { amount: paiseToDb(amountPaise), next_due: v.nextDue, frequency: v.frequency },
+  })
+
+  revalidatePath("/finance/recurring")
+  revalidatePath("/dashboard")
+  return { ok: true, id }
+}
+
 export async function setRecurringExpenseActive(
   id: string,
   active: boolean

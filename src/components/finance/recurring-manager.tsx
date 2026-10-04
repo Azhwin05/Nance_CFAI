@@ -10,9 +10,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
@@ -41,6 +40,7 @@ import { formatMoney, paiseFromDb } from "@/lib/finance/money"
 import type { RecurringExpenseRow } from "@/lib/finance/recurring"
 import {
   createRecurringExpense,
+  updateRecurringExpense,
   setRecurringExpenseActive,
   generateDueRecurringExpenses,
 } from "@/app/(app)/finance/recurring/actions"
@@ -98,8 +98,11 @@ export function RecurringExpenseManager({
   const [nextDue, setNextDue] = React.useState(
     new Date().toISOString().slice(0, 10)
   )
+  const [endDate, setEndDate] = React.useState("")
   const [autoCreate, setAutoCreate] = React.useState(true)
   const [requireApproval, setRequireApproval] = React.useState(true)
+  // null = adding a new one; an id = editing that recurring expense
+  const [editingId, setEditingId] = React.useState<string | null>(null)
 
   const grouped = React.useMemo(() => {
     const map = new Map<string, Category[]>()
@@ -116,6 +119,7 @@ export function RecurringExpenseManager({
   ).length
 
   function resetForm() {
+    setEditingId(null)
     setName("")
     setVendor("")
     setCategoryId(NONE)
@@ -123,28 +127,56 @@ export function RecurringExpenseManager({
     setFrequency("monthly")
     setStartDate(new Date().toISOString().slice(0, 10))
     setNextDue(new Date().toISOString().slice(0, 10))
+    setEndDate("")
     setAutoCreate(true)
     setRequireApproval(true)
   }
 
+  function openAdd() {
+    resetForm()
+    setOpen(true)
+  }
+
+  function openEdit(r: RecurringExpenseRow) {
+    setEditingId(r.id)
+    setName(r.name)
+    setVendor(r.vendor ?? "")
+    setCategoryId(
+      categories.find((c) => c.name === r.category?.name && c.parent === r.category?.parent)
+        ?.id ?? NONE
+    )
+    setAmount(String(r.amount))
+    setFrequency(r.frequency)
+    setStartDate(r.start_date)
+    setNextDue(r.next_due ?? new Date().toISOString().slice(0, 10))
+    setEndDate(r.end_date ?? "")
+    setAutoCreate(r.auto_create)
+    setRequireApproval(r.require_approval)
+    setOpen(true)
+  }
+
   function submit() {
     startTransition(async () => {
-      const result = await createRecurringExpense({
+      const payload = {
         name,
         vendor: vendor || null,
         categoryId: categoryId === NONE ? null : categoryId,
         amount,
         frequency: frequency as "weekly" | "monthly" | "quarterly" | "yearly",
         startDate,
+        endDate: endDate || null,
         nextDue,
         autoCreate,
         requireApproval,
-      })
+      }
+      const result = editingId
+        ? await updateRecurringExpense(editingId, payload)
+        : await createRecurringExpense(payload)
       if ("error" in result) {
         toast.error(result.error)
         return
       }
-      toast.success("Recurring expense added")
+      toast.success(editingId ? "Recurring expense updated" : "Recurring expense added")
       setOpen(false)
       resetForm()
       router.refresh()
@@ -202,14 +234,20 @@ export function RecurringExpenseManager({
               <Icon name="RefreshCw" className="size-4" />
               Generate due
             </Button>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger className={buttonVariants({ size: "sm" })}>
-                <Icon name="Plus" className="size-4" />
-                Add
-              </DialogTrigger>
+            <Button size="sm" onClick={openAdd}>
+              <Icon name="Plus" className="size-4" />
+              Add
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm() }}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add recurring expense</DialogTitle>
+                  <DialogTitle>
+                    {editingId ? "Edit recurring expense" : "Add recurring expense"}
+                  </DialogTitle>
                   <DialogDescription>
                     A repeating cost. Due transactions are created as{" "}
                     <em>expected</em> and still need confirmation — nothing is
@@ -311,6 +349,15 @@ export function RecurringExpenseManager({
                       />
                     </div>
                   </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="re-end">End date (optional)</Label>
+                    <Input
+                      id="re-end"
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div>
                       <div className="text-sm font-medium">Auto-create transaction</div>
@@ -342,14 +389,11 @@ export function RecurringExpenseManager({
                     Cancel
                   </Button>
                   <Button onClick={submit} disabled={pending || !name || !amount}>
-                    {pending ? "Saving…" : "Add"}
+                    {pending ? "Saving…" : editingId ? "Save changes" : "Add"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      )}
+      </Dialog>
 
       {rows.length === 0 ? (
         <EmptyState
@@ -408,7 +452,11 @@ export function RecurringExpenseManager({
                       />
                     </TableCell>
                     {canManage && (
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(r)}>
+                          <Icon name="Pencil" className="size-3.5" />
+                          Edit
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -449,7 +497,11 @@ export function RecurringExpenseManager({
                   </div>
                 </div>
                 {canManage && (
-                  <div className="mt-2 flex justify-end">
+                  <div className="mt-2 flex justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={() => openEdit(r)}>
+                      <Icon name="Pencil" className="size-3.5" />
+                      Edit
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
