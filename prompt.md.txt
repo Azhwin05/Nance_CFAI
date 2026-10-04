@@ -1,0 +1,2695 @@
+# CLICKFIELD OS
+## Internal Finance, Client, Project & Operations Management Platform
+
+Build a production-ready, responsive, PWA-first web application called **Clickfield OS** for Clickfield AI.
+
+This is an internal company management platform.
+
+The application must combine:
+
+1. Client Management
+2. Lead / Sales Pipeline
+3. Project Management
+4. Agreement & Document Management
+5. Income Management
+6. Expense Management
+7. Payment Tracking
+8. Expense Approval
+9. Recurring Revenue / MRR
+10. Recurring Expenses
+11. Financial Dashboard
+12. Cash Flow
+13. Project Profitability
+14. Notifications
+15. Audit Logs
+16. User Roles & Permissions
+17. Reports
+18. Settings
+
+The system must be intentionally SIMPLE.
+
+Do NOT turn this into a complicated ERP.
+
+Do NOT build AI features.
+
+Do NOT add unnecessary accounting complexity.
+
+The primary goal is:
+
+> Give Clickfield AI one place where management can understand clients, projects, money coming in, money going out, pending payments, recurring revenue, expenses, documents, approvals and profitability.
+
+---
+
+# 1. PRODUCT PHILOSOPHY
+
+The application should follow these principles:
+
+### Simple
+
+A person with no accounting background should understand the interface immediately.
+
+### Fast
+
+Pages should load quickly.
+
+Tables should be searchable and filterable.
+
+Avoid unnecessary animations.
+
+### Reliable
+
+Financial data must never silently disappear or become inconsistent.
+
+### Traceable
+
+Every important financial action must have an audit trail.
+
+### Permission controlled
+
+Employees should only see and modify information appropriate to their role.
+
+### Mobile-first responsive
+
+The application must work properly at:
+
+- 360px mobile
+- 390px mobile
+- 430px mobile
+- 768px tablet
+- 1024px tablet/laptop
+- 1280px desktop
+- 1440px desktop
+- 1920px desktop
+
+Do not simply shrink the desktop UI.
+
+Create proper mobile layouts.
+
+---
+
+# 2. APPLICATION TYPE
+
+Build this as:
+
+## Responsive Web Application + Progressive Web App
+
+The same application should work on:
+
+### Desktop
+
+Browser:
+
+Chrome
+Edge
+Safari
+Firefox
+
+### Android
+
+Chrome/PWA.
+
+The user should be able to:
+
+> Add to Home Screen
+
+and launch the system like an application.
+
+### iOS
+
+Safari/PWA.
+
+Support:
+
+> Add to Home Screen
+
+The application must have:
+
+- PWA manifest
+- App icons
+- Splash/launch configuration
+- Service worker where appropriate
+- Responsive viewport
+- Safe-area support
+- Mobile navigation
+- Touch-friendly controls
+
+Do not create separate Android and iOS codebases.
+
+Use one frontend.
+
+---
+
+# 3. RECOMMENDED TECH STACK
+
+Use a modern production stack.
+
+## Frontend
+
+Next.js with TypeScript.
+
+Use:
+
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Lucide icons
+- TanStack Query where useful
+- React Hook Form
+- Zod
+- Recharts
+
+Do not use excessive third-party UI libraries.
+
+Prefer a consistent design system.
+
+---
+
+# 4. BACKEND
+
+Use:
+
+Next.js server-side functionality/API routes/server actions where appropriate.
+
+Database:
+
+PostgreSQL.
+
+Preferred:
+
+Supabase PostgreSQL.
+
+Authentication:
+
+Supabase Auth.
+
+Storage:
+
+Supabase Storage.
+
+Use separate storage buckets or logical folders for:
+
+- agreements
+- invoices
+- payment-proofs
+- expense-proofs
+- project-documents
+- client-documents
+- other-documents
+
+Never expose private financial documents publicly.
+
+Use signed URLs/private access.
+
+---
+
+# 5. SECURITY
+
+Security is extremely important.
+
+Implement:
+
+- Authentication
+- Role-based access control
+- Row-level security
+- Server-side authorization
+- Secure file access
+- Input validation
+- Audit logging
+- Session handling
+- Protected routes
+- Rate limiting where appropriate
+- CSRF protection where relevant
+- Secure headers
+- No sensitive information in client-side logs
+- No secrets in frontend code
+
+Never trust frontend permission checks.
+
+All important authorization checks must also happen server-side/database-side.
+
+---
+
+# 6. USER ROLES
+
+Create these roles:
+
+## SUPER ADMIN
+
+Full access.
+
+Can:
+
+- Manage users
+- Manage permissions
+- Manage clients
+- Manage projects
+- View all finances
+- Approve expenses
+- Edit financial records
+- Close projects
+- View reports
+- View audit logs
+- Configure system
+
+---
+
+## ADMIN / MANAGEMENT
+
+Almost full access.
+
+Can:
+
+- Manage clients
+- Manage projects
+- Manage agreements
+- View financial dashboard
+- Approve expenses
+- View reports
+- Manage payments
+- Close projects
+
+Cannot modify system-level security settings unless explicitly permitted.
+
+---
+
+## FINANCE
+
+Can:
+
+- View income
+- Add income
+- Add expenses
+- Upload proofs
+- Manage invoices
+- Track payments
+- View financial reports
+- Submit/approve depending on configured permission
+
+---
+
+## PROJECT MANAGER
+
+Can:
+
+- Manage assigned clients
+- Manage projects
+- Manage project milestones
+- Upload agreements
+- Upload project documents
+- Update project status
+- Request project closure
+
+Cannot directly modify approved financial transactions unless permitted.
+
+---
+
+## EMPLOYEE
+
+Can:
+
+- View assigned projects
+- View assigned clients
+- Submit expenses
+- Upload expense proofs
+- Add project updates
+
+Cannot access confidential company-wide financial information.
+
+---
+
+## VIEWER
+
+Read-only access.
+
+---
+
+# 7. GLOBAL APPLICATION STRUCTURE
+
+Desktop sidebar:
+
+```text
+CLICKFIELD OS
+
+Dashboard
+
+Business
+  Leads
+  Clients
+  Projects
+
+Finance
+  Overview
+  Income
+  Expenses
+  Payments
+  Invoices
+  MRR
+  Recurring Expenses
+
+Documents
+
+Reports
+
+Notifications
+
+Audit Logs
+
+Settings
+```
+
+On mobile:
+
+Use a bottom navigation bar:
+
+```text
+Home
+Clients
+Projects
+Finance
+More
+```
+
+The More section contains:
+
+- Documents
+- Reports
+- Notifications
+- Audit Logs
+- Settings
+
+Do not put 15 icons into the mobile bottom navigation.
+
+---
+
+# 8. GLOBAL HEADER
+
+Desktop:
+
+Left:
+
+Page title
+
+Center:
+
+Global search
+
+Right:
+
+Notifications
+Profile
+Company switch/context if needed
+
+Mobile:
+
+Top:
+
+Page title
+
+Right:
+
+Search
+Notifications
+Profile/menu
+
+---
+
+# 9. GLOBAL SEARCH
+
+Implement global search.
+
+Search across:
+
+- Clients
+- Contacts
+- Projects
+- Invoices
+- Payments
+- Income
+- Expenses
+- Documents
+
+Examples:
+
+Search:
+
+"NK Hospital"
+
+should show:
+
+```text
+Client
+NK Hospital
+
+Projects
+Website Development
+
+Invoices
+INV-001
+
+Payments
+₹60,000
+
+Documents
+Agreement.pdf
+```
+
+Search:
+
+"Supabase"
+
+should show:
+
+```text
+Expenses
+₹8,500 — October
+₹8,500 — September
+₹8,500 — August
+
+Recurring Expense
+Supabase Pro
+```
+
+---
+
+# 10. DASHBOARD
+
+The dashboard is the most important screen.
+
+It must answer:
+
+> How is Clickfield doing financially right now?
+
+Top KPI cards:
+
+```text
+Total Revenue
+₹4,82,000
+
+Total Expenses
+₹1,43,500
+
+Net Profit
+₹3,38,500
+
+MRR
+₹82,000
+
+Receivables
+₹92,000
+
+Upcoming Expenses
+₹45,000
+```
+
+Do not hard-code these numbers.
+
+Calculate them from actual transactions.
+
+---
+
+# 11. DASHBOARD CHARTS
+
+Include:
+
+### Revenue vs Expenses
+
+Monthly chart.
+
+### Revenue Trend
+
+Last:
+
+- 7 days
+- 30 days
+- 3 months
+- 6 months
+- 12 months
+
+### Expense Breakdown
+
+Pie/donut/bar chart:
+
+```text
+Cloud
+Software
+Rent
+Salary
+Marketing
+Travel
+Other
+```
+
+### MRR Trend
+
+Show MRR over time.
+
+### Receivables
+
+Show:
+
+- Current
+- Due soon
+- Overdue
+
+---
+
+# 12. DASHBOARD ALERTS
+
+Create an alerts section.
+
+Examples:
+
+```text
+⚠ 3 invoices overdue
+
+⚠ 2 expenses waiting for approval
+
+⚠ 1 project cannot be closed because agreement is missing
+
+⚠ ₹40,000 payment due this week
+
+✓ All recurring expenses recorded
+```
+
+---
+
+# 13. CLIENT MANAGEMENT
+
+Create:
+
+## Clients
+
+Fields:
+
+- Client ID
+- Company name
+- Contact person
+- Email
+- Phone
+- Alternate phone
+- GSTIN
+- Address
+- Website
+- Industry
+- Client status
+- Notes
+- Created date
+- Assigned manager
+
+Statuses:
+
+- Lead
+- Prospect
+- Active
+- Inactive
+- Archived
+
+---
+
+# 14. CLIENT PROFILE
+
+Client page:
+
+```text
+NK Hospital
+
+Active
+```
+
+Tabs:
+
+```text
+Overview
+Projects
+Financials
+Invoices
+Payments
+Documents
+Activity
+```
+
+Overview:
+
+- Contact information
+- Total project value
+- Total received
+- Outstanding
+- MRR
+- Active projects
+
+---
+
+# 15. SALES / LEAD PIPELINE
+
+Implement simple CRM pipeline.
+
+Stages:
+
+```text
+Lead
+↓
+Discussion
+↓
+Proposal Sent
+↓
+Negotiation
+↓
+Won
+↓
+Agreement Pending
+↓
+Active
+↓
+Lost
+```
+
+Each lead:
+
+- Company
+- Contact
+- Contact details
+- Requirement
+- Estimated value
+- Expected MRR
+- Probability
+- Expected close date
+- Notes
+- Owner
+
+---
+
+# 16. CONVERT LEAD TO CLIENT
+
+When a lead becomes Won:
+
+Provide:
+
+> Convert to Client
+
+This should create:
+
+- Client
+- Project optionally
+- Financial proposal
+- Agreement requirement
+
+Do not duplicate data unnecessarily.
+
+---
+
+# 17. PROJECT MANAGEMENT
+
+Every client can have multiple projects.
+
+Project fields:
+
+- Project ID
+- Project name
+- Client
+- Owner
+- Description
+- Start date
+- Expected completion date
+- Status
+- Contract value
+- One-time value
+- MRR
+- Payment terms
+- Notes
+
+Statuses:
+
+```text
+Draft
+Agreement Pending
+Active
+On Hold
+Completed
+Closure Pending
+Closed
+Cancelled
+```
+
+---
+
+# 18. PROJECT FINANCIALS
+
+Each project must have:
+
+```text
+Contract Value
+One-Time Revenue
+Monthly Recurring Revenue
+Amount Received
+Amount Pending
+Expenses
+Project Profit
+Profit Margin
+```
+
+Example:
+
+```text
+Contract Value      ₹1,20,000
+Received             ₹80,000
+Outstanding          ₹40,000
+
+Project Expenses     ₹25,000
+
+Estimated Profit     ₹95,000
+```
+
+---
+
+# 19. PROJECT DOCUMENTS
+
+Every project has:
+
+```text
+Documents
+
+Agreement
+Quotation
+Invoice
+Purchase Order
+Client Approval
+Final Acceptance
+Other
+```
+
+Documents must be private.
+
+Allow:
+
+- Upload
+- Preview
+- Download
+- Rename
+- Delete according to permissions
+- Versioning where useful
+
+Record:
+
+- Uploaded by
+- Uploaded date
+- Document type
+
+---
+
+# 20. PROJECT CLOSURE RULE
+
+This is a critical business rule.
+
+A project must NOT be allowed to become:
+
+> Closed
+
+unless mandatory closure requirements are satisfied.
+
+At minimum:
+
+```text
+Agreement uploaded
+Final deliverables completed
+Final payment status recorded
+Closure notes added
+```
+
+If the agreement is missing:
+
+```text
+Project cannot be closed.
+
+Required document:
+Agreement
+
+[Upload Agreement]
+```
+
+The Close Project button must remain disabled.
+
+Do not rely only on frontend validation.
+
+Enforce this rule server-side.
+
+---
+
+# 21. PROJECT CLOSURE WORKFLOW
+
+Normal flow:
+
+```text
+Active
+ ↓
+Completed
+ ↓
+Closure Pending
+ ↓
+System checks requirements
+ ↓
+Requirements satisfied
+ ↓
+Close Project
+ ↓
+Closed
+```
+
+If requirements aren't satisfied:
+
+```text
+Closure Blocked
+```
+
+Show exactly what is missing.
+
+---
+
+# 22. INCOME MODULE
+
+Create:
+
+> Add Income
+
+Fields:
+
+- Client
+- Project
+- Invoice
+- Amount
+- Currency
+- Date
+- Payment method
+- Transaction reference
+- Income type
+- Description
+- Proof
+- Notes
+
+Income types:
+
+- One-time
+- Recurring
+- Advance
+- Milestone
+- Final payment
+- Other
+
+---
+
+# 23. PAYMENT STATUS
+
+Payment statuses:
+
+```text
+Pending
+Partially Paid
+Paid
+Overdue
+Cancelled
+Refunded
+```
+
+Never delete financial transactions casually.
+
+Prefer:
+
+> Void / Cancel
+
+with an audit trail.
+
+---
+
+# 24. INVOICES
+
+Create invoice records.
+
+Fields:
+
+- Invoice number
+- Client
+- Project
+- Issue date
+- Due date
+- Amount
+- Tax if configured
+- Total
+- Status
+- Payment status
+- Notes
+
+Statuses:
+
+```text
+Draft
+Sent
+Partially Paid
+Paid
+Overdue
+Cancelled
+```
+
+Allow PDF upload.
+
+Do not initially build a complicated GST accounting engine.
+
+Keep it simple.
+
+---
+
+# 25. EXPENSE MODULE
+
+This is one of the most important modules.
+
+Create:
+
+> Add Expense
+
+Fields:
+
+```text
+Expense category
+Vendor
+Amount
+Date
+Payment method
+Description
+Project
+Recurring?
+Proof
+Invoice
+Submitted by
+```
+
+Example:
+
+```text
+Category:
+Cloud Infrastructure
+
+Vendor:
+Supabase
+
+Amount:
+₹8,500
+
+Description:
+Production database subscription
+
+Project:
+Company-wide
+
+Payment proof:
+receipt.pdf
+
+Recurring:
+Yes
+
+Frequency:
+Monthly
+```
+
+---
+
+# 26. EXPENSE CATEGORIES
+
+Default categories:
+
+### Office
+
+- Rent
+- Electricity
+- Internet
+- Telephone
+- Office Supplies
+- Maintenance
+
+### Cloud
+
+- AWS
+- Azure
+- Supabase
+- Cloudflare
+- Vercel
+- Other Cloud
+
+### Software
+
+- GitHub
+- Google Workspace
+- Microsoft
+- Adobe
+- SaaS
+- Other Software
+
+### People
+
+- Salary
+- Freelancer
+- Contractor
+
+### Marketing
+
+- Advertising
+- Events
+- Sponsorship
+- Design
+
+### Travel
+
+- Travel
+- Accommodation
+- Transport
+- Food
+
+### Business
+
+- Legal
+- Accounting
+- Banking
+- Registration
+- Other
+
+Allow custom categories.
+
+---
+
+# 27. EXPENSE APPROVAL WORKFLOW
+
+An employee submits:
+
+```text
+Supabase
+₹8,500
+```
+
+Status:
+
+```text
+Pending Approval
+```
+
+Admin opens it.
+
+Show:
+
+```text
+Vendor
+Amount
+Category
+Description
+Payment proof
+Invoice
+Submitted by
+Date
+```
+
+Buttons:
+
+```text
+Approve
+Reject
+Request Changes
+```
+
+Approval should record:
+
+- Approved by
+- Approved date
+- Approval comment
+
+---
+
+# 28. EXPENSE PROOF REQUIREMENT
+
+Configure whether proof is mandatory.
+
+For normal company expenses:
+
+Proof should normally be required.
+
+Accepted:
+
+- PDF
+- JPG
+- PNG
+- WEBP
+
+Limit file size appropriately.
+
+Store securely.
+
+---
+
+# 29. RECURRING EXPENSES
+
+Create:
+
+> Recurring Expense
+
+Example:
+
+```text
+Office Rent
+₹35,000
+Monthly
+1st
+
+Supabase
+₹8,500
+Monthly
+12th
+
+Google Workspace
+₹1,800
+Monthly
+5th
+```
+
+Fields:
+
+- Name
+- Vendor
+- Category
+- Amount
+- Frequency
+- Start date
+- End date
+- Next due date
+- Auto-create transaction
+- Require approval
+- Active/inactive
+
+Do not automatically mark an expense paid.
+
+Create an expected transaction and let authorized users confirm it.
+
+---
+
+# 30. MRR
+
+MRR means Monthly Recurring Revenue.
+
+For every recurring client/project:
+
+```text
+Client
+Project
+MRR
+Start date
+Renewal/billing date
+Status
+```
+
+Dashboard:
+
+```text
+Current MRR
+New MRR
+Lost MRR
+Net MRR Growth
+```
+
+Client-level MRR:
+
+```text
+Client A    ₹25,000
+Client B    ₹15,000
+Client C    ₹30,000
+```
+
+---
+
+# 31. CASH FLOW
+
+Create:
+
+## Cash Flow
+
+```text
+Opening Balance
++
+Money In
+-
+Money Out
+=
+Closing Balance
+```
+
+Show monthly.
+
+Allow date filters.
+
+Do not confuse:
+
+> Invoice issued
+
+with:
+
+> Cash received
+
+Revenue and actual cash received must remain distinguishable.
+
+---
+
+# 32. RECEIVABLES
+
+Show money clients owe.
+
+Table:
+
+```text
+Client
+Invoice
+Amount
+Due Date
+Status
+Days Overdue
+```
+
+Filters:
+
+- Due today
+- Due this week
+- Overdue
+- Paid
+
+---
+
+# 33. PAYABLES
+
+Show money Clickfield owes.
+
+Examples:
+
+- Vendor bills
+- Rent
+- Software
+- Contractors
+
+Show:
+
+```text
+Vendor
+Amount
+Due date
+Category
+Status
+```
+
+---
+
+# 34. PROJECT PROFITABILITY
+
+Calculate:
+
+```text
+Project Revenue
+-
+Project Expenses
+=
+Project Profit
+```
+
+Show:
+
+```text
+Revenue
+Expenses
+Profit
+Margin
+```
+
+Allow company-wide and project-level expense allocation.
+
+---
+
+# 35. DOCUMENT MANAGEMENT
+
+Create centralized Documents.
+
+Categories:
+
+```text
+Client Documents
+Project Documents
+Agreements
+Invoices
+Payment Proofs
+Expense Proofs
+Other
+```
+
+Every document should have:
+
+- Name
+- Type
+- Owner
+- Related client
+- Related project
+- Upload date
+- Uploaded by
+- File size
+- Version if applicable
+
+---
+
+# 36. NOTIFICATIONS
+
+Implement in-app notifications.
+
+Examples:
+
+```text
+New expense submitted
+Expense approved
+Expense rejected
+Invoice overdue
+Payment received
+Agreement uploaded
+Project ready for closure
+Project closure blocked
+Recurring expense due
+```
+
+Unread notification count should appear in header.
+
+---
+
+# 37. OPTIONAL EMAIL NOTIFICATIONS
+
+Architect the system so email notifications can be added later.
+
+Do not make email mandatory for V1.
+
+Future events:
+
+- Invoice created
+- Payment reminder
+- Expense approval
+- Project closure
+- Agreement missing
+
+Use an email provider later.
+
+---
+
+# 38. AUDIT LOG
+
+This is mandatory.
+
+Record important actions:
+
+```text
+Who
+What
+When
+What changed
+Related record
+```
+
+Examples:
+
+```text
+Ashwin approved expense EXP-103
+₹8,500
+04 Oct 2026
+
+Kishore submitted expense EXP-103
+₹8,500
+04 Oct 2026
+
+Ashwin uploaded Agreement.pdf
+Project PRJ-102
+
+Ashwin changed project status
+Active → Closure Pending
+```
+
+For updates, ideally record old and new values.
+
+Audit logs should not be editable by normal users.
+
+---
+
+# 39. REPORTS
+
+Create:
+
+### Revenue Report
+
+- Date range
+- Client
+- Project
+- Income type
+
+### Expense Report
+
+- Date range
+- Category
+- Vendor
+- Project
+
+### Profit Report
+
+- Revenue
+- Expenses
+- Profit
+- Margin
+
+### MRR Report
+
+- Current MRR
+- Historical MRR
+- Client MRR
+
+### Receivables Report
+
+- Pending
+- Overdue
+
+### Project Profitability Report
+
+- Revenue
+- Expense
+- Profit
+- Margin
+
+Every report should support:
+
+- Filter
+- Search
+- Sort
+- Export CSV
+- Export XLSX where practical
+- Print/PDF later
+
+---
+
+# 40. MOBILE EXPERIENCE
+
+Do NOT simply make desktop responsive.
+
+Create mobile-specific layouts.
+
+For example:
+
+Desktop:
+
+```text
+Sidebar | Content
+```
+
+Mobile:
+
+```text
+Header
+
+Content
+
+Bottom Navigation
+```
+
+Tables should become cards where necessary.
+
+Example:
+
+Desktop:
+
+| Client | Project | Amount | Status |
+
+Mobile:
+
+```text
+NK Hospital
+Website Development
+
+₹1,20,000
+₹40,000 pending
+
+● Active
+```
+
+---
+
+# 41. MOBILE QUICK ACTION
+
+On mobile, provide a floating:
+
+```text
++
+```
+
+button.
+
+Actions:
+
+```text
+Add Expense
+Add Income
+Add Client
+Add Project
+Upload Document
+```
+
+This makes the app genuinely useful on a phone.
+
+---
+
+# 42. RESPONSIVE SIDEBAR
+
+Desktop:
+
+Persistent sidebar.
+
+Tablet:
+
+Collapsible sidebar.
+
+Mobile:
+
+Bottom navigation + drawer.
+
+Never allow horizontal scrolling for the entire application.
+
+---
+
+# 43. DESIGN SYSTEM
+
+The UI should feel:
+
+- Professional
+- Minimal
+- Modern
+- Premium
+- Business-focused
+- Fast
+- Clean
+
+Avoid:
+
+- Excessive gradients
+- Excessive glassmorphism
+- Huge rounded cards
+- Excessive animations
+- AI-looking interfaces
+- Neon colors
+- Cartoon-style graphics
+
+Use restrained colors.
+
+Primary:
+
+Dark charcoal / near-black.
+
+Accent:
+
+Muted indigo/blue.
+
+Background:
+
+Light neutral for light mode.
+
+Also support dark mode if practical.
+
+---
+
+# 44. TYPOGRAPHY
+
+Use a professional modern sans-serif.
+
+Suggested:
+
+Inter.
+
+Strong hierarchy:
+
+```text
+Page title
+Section title
+Card title
+Body
+Secondary text
+Metadata
+```
+
+Do not make every piece of text bold.
+
+---
+
+# 45. DASHBOARD DESIGN
+
+The dashboard should not look like a template full of random cards.
+
+Prioritize:
+
+1. Financial health
+2. Pending actions
+3. Revenue
+4. Expenses
+5. Receivables
+6. Projects
+
+Top area:
+
+```text
+Good morning, Ashwin
+
+Here's what's happening with Clickfield.
+```
+
+Then financial KPIs.
+
+Then charts.
+
+Then action items.
+
+---
+
+# 46. DATABASE DESIGN
+
+Create a normalized PostgreSQL schema.
+
+Core tables:
+
+```text
+users
+roles
+permissions
+user_roles
+
+clients
+client_contacts
+
+leads
+lead_activities
+
+projects
+project_members
+project_milestones
+
+agreements
+documents
+
+invoices
+invoice_items
+
+income_transactions
+payments
+
+expense_categories
+expenses
+expense_approvals
+
+recurring_revenues
+recurring_expenses
+
+notifications
+
+audit_logs
+
+settings
+```
+
+Add timestamps:
+
+```text
+created_at
+updated_at
+```
+
+Where appropriate:
+
+```text
+created_by
+updated_by
+```
+
+Use UUID primary keys.
+
+Use foreign keys.
+
+Use database constraints.
+
+Use indexes on:
+
+- client_id
+- project_id
+- status
+- dates
+- invoice numbers
+- transaction dates
+- expense categories
+
+---
+
+# 47. FINANCIAL DATA MODEL
+
+Do not mix arbitrary financial data into client/project tables.
+
+Financial transactions should have clear records.
+
+Every transaction should have:
+
+```text
+id
+type
+amount
+currency
+date
+description
+client_id
+project_id
+category_id
+status
+payment_method
+reference
+created_by
+created_at
+```
+
+Separate:
+
+```text
+Expected
+Pending
+Approved
+Paid
+Cancelled
+```
+
+where necessary.
+
+---
+
+# 48. MONEY HANDLING
+
+Never use floating point for financial calculations.
+
+Use:
+
+- PostgreSQL NUMERIC/DECIMAL
+- Proper currency handling
+
+Default currency:
+
+INR.
+
+Architecture should allow other currencies later.
+
+---
+
+# 49. BUSINESS RULES
+
+Implement these rules.
+
+### Rule 1
+
+Closed project requires agreement.
+
+### Rule 2
+
+Only authorized users can approve expenses.
+
+### Rule 3
+
+Approved financial records cannot be silently edited.
+
+If modification is required:
+
+Create adjustment/correction and audit it.
+
+### Rule 4
+
+Deleted financial records should normally be soft-deleted/voided.
+
+### Rule 5
+
+Only authorized users can see company-wide financial data.
+
+### Rule 6
+
+Employees should only see relevant projects/expenses according to permissions.
+
+### Rule 7
+
+Payment received must update outstanding balance.
+
+### Rule 8
+
+MRR should be calculated from active recurring revenue records.
+
+### Rule 9
+
+Recurring expenses should generate expected transactions.
+
+### Rule 10
+
+Project closure must validate all mandatory closure requirements server-side.
+
+---
+
+# 50. ERROR HANDLING
+
+Never silently fail.
+
+Show clear messages.
+
+Bad:
+
+```text
+Error 500
+```
+
+Good:
+
+```text
+We couldn't upload the document.
+
+Please check the file size and try again.
+```
+
+For financial operations:
+
+Use explicit confirmation.
+
+Example:
+
+```text
+Approve Expense?
+
+Supabase
+₹8,500
+
+This will mark the expense as approved.
+
+Cancel     Approve
+```
+
+---
+
+# 51. LOADING STATES
+
+Every page must have:
+
+- Skeleton loading
+- Empty states
+- Error states
+
+Example empty state:
+
+```text
+No expenses yet.
+
+Once expenses are added, they'll appear here.
+
+[ Add Expense ]
+```
+
+---
+
+# 52. CONFIRMATION STATES
+
+After successful actions:
+
+```text
+✓ Expense submitted successfully
+```
+
+Do not use intrusive popups unnecessarily.
+
+Use toast notifications.
+
+---
+
+# 53. EMPTY STATES
+
+Create useful empty states for:
+
+- No clients
+- No projects
+- No invoices
+- No income
+- No expenses
+- No documents
+- No notifications
+- No reports
+
+Every empty state should explain what to do next.
+
+---
+
+# 54. ONBOARDING
+
+First-time Admin setup:
+
+```text
+Welcome to Clickfield OS
+
+Let's set up your company.
+
+Company name
+Currency
+Financial year
+First admin user
+```
+
+Then:
+
+```text
+Add your first client
+```
+
+Optional.
+
+---
+
+# 55. SETTINGS
+
+Settings sections:
+
+### Company
+
+- Company name
+- Logo
+- Address
+- GSTIN
+- Currency
+- Financial year
+
+### Users
+
+- Users
+- Roles
+- Permissions
+
+### Finance
+
+- Expense categories
+- Payment methods
+- Invoice settings
+
+### Notifications
+
+- Notification preferences
+
+### Security
+
+- Sessions
+- Password
+- 2FA if implemented
+
+---
+
+# 56. PAYMENT METHODS
+
+Default:
+
+- Bank Transfer
+- UPI
+- Cash
+- Credit Card
+- Debit Card
+- Company Card
+- Other
+
+Allow custom payment methods.
+
+---
+
+# 57. FILE STORAGE
+
+Use private storage.
+
+Documents should never be accessible by guessing a URL.
+
+Use authenticated access / signed URLs.
+
+Validate:
+
+- File type
+- File size
+- User permissions
+
+Generate previews where practical.
+
+---
+
+# 58. PERFORMANCE
+
+Target:
+
+- Fast initial load
+- Server-side rendering where useful
+- Pagination
+- Lazy loading
+- Optimized queries
+- Indexed database queries
+- Image optimization
+- Avoid fetching entire tables
+
+Never load 10,000 transactions into the browser.
+
+Use server pagination.
+
+---
+
+# 59. DATA TABLES
+
+All major tables need:
+
+- Search
+- Filters
+- Sorting
+- Pagination
+- Column visibility where useful
+- Date filters
+- Status filters
+
+On mobile, convert to cards rather than forcing wide tables.
+
+---
+
+# 60. PWA
+
+Implement:
+
+```text
+manifest.json
+service worker
+icons
+theme color
+standalone display
+```
+
+App name:
+
+**Clickfield OS**
+
+Short name:
+
+**Clickfield**
+
+Use proper icons.
+
+Ensure the application can be installed from supported browsers.
+
+Do not pretend that a PWA is identical to a native application.
+
+Prioritize reliable core functionality over unnecessary offline complexity.
+
+---
+
+# 61. OFFLINE BEHAVIOR
+
+Do not attempt full offline accounting in V1.
+
+Financial transactions should require a reliable connection.
+
+However:
+
+- Cache static assets
+- Cache basic shell
+- Show offline status
+
+If offline:
+
+```text
+You're offline.
+
+Financial changes require an internet connection.
+```
+
+---
+
+# 62. ACCESSIBILITY
+
+Implement:
+
+- Keyboard navigation
+- Proper labels
+- ARIA where necessary
+- Focus states
+- Sufficient contrast
+- Screen-reader friendly buttons
+- Touch targets at least approximately 44px on mobile
+
+---
+
+# 63. RESPONSIVE TESTING
+
+Test manually and/or automatically on:
+
+### Mobile
+
+iPhone-sized viewport:
+390 × 844
+
+Android:
+360 × 800
+
+### Tablet
+
+768 × 1024
+
+### Laptop
+
+1366 × 768
+
+### Desktop
+
+1440 × 900
+
+### Large desktop
+
+1920 × 1080
+
+Fix:
+
+- Overflow
+- Broken tables
+- Modal sizing
+- Sidebar behavior
+- Navigation
+- Charts
+- Forms
+
+---
+
+# 64. TESTING
+
+Create automated tests.
+
+At minimum:
+
+### Authentication
+
+- Login
+- Logout
+- Unauthorized access
+
+### Clients
+
+- Create
+- Edit
+- Archive
+
+### Projects
+
+- Create
+- Status transitions
+- Closure validation
+
+### Agreements
+
+- Upload
+- Permission checking
+
+### Income
+
+- Create
+- Payment update
+- Balance calculation
+
+### Expenses
+
+- Create
+- Submit
+- Approve
+- Reject
+
+### MRR
+
+- Create recurring revenue
+- Calculate MRR
+
+### Recurring expenses
+
+- Create
+- Generate expected transactions
+
+### Dashboard
+
+- Revenue calculation
+- Expense calculation
+- Profit calculation
+
+### Security
+
+- Unauthorized users cannot access protected records.
+
+---
+
+# 65. CRITICAL FINANCIAL TESTS
+
+Test calculations carefully.
+
+Example:
+
+Income:
+
+```text
+₹1,20,000
+```
+
+Expenses:
+
+```text
+₹20,000
+₹10,000
+₹5,000
+```
+
+Expected:
+
+```text
+Revenue = ₹1,20,000
+Expenses = ₹35,000
+Profit = ₹85,000
+```
+
+Do not calculate financial totals differently on different pages.
+
+Create centralized financial calculation utilities.
+
+---
+
+# 66. SEED DATA
+
+Create realistic development seed data.
+
+Example:
+
+Clients:
+
+```text
+NK Hospital
+Client A
+Client B
+```
+
+Projects:
+
+```text
+Hospital Website
+ERP Development
+AI Lead Intelligence
+```
+
+Income:
+
+```text
+₹1,20,000
+₹50,000
+₹35,000
+```
+
+Expenses:
+
+```text
+Supabase
+Vercel
+Office Rent
+Internet
+Google Workspace
+```
+
+This should make the dashboard look realistic during development.
+
+Clearly label seed/demo data.
+
+---
+
+# 67. PROJECT STRUCTURE
+
+Use a clean architecture.
+
+Example:
+
+```text
+app/
+  dashboard/
+  clients/
+  leads/
+  projects/
+  finance/
+    income/
+    expenses/
+    invoices/
+    payments/
+    mrr/
+  documents/
+  reports/
+  notifications/
+  settings/
+
+components/
+  ui/
+  dashboard/
+  clients/
+  projects/
+  finance/
+  documents/
+
+lib/
+  auth/
+  db/
+  finance/
+  permissions/
+  storage/
+  validation/
+
+types/
+
+hooks/
+
+services/
+
+tests/
+```
+
+Do not put everything in one giant component.
+
+---
+
+# 68. DEVELOPMENT APPROACH
+
+Build in phases.
+
+## PHASE 1
+
+Foundation:
+
+- Authentication
+- Database
+- Layout
+- Responsive navigation
+- Roles
+- Permissions
+
+## PHASE 2
+
+Clients:
+
+- Leads
+- Clients
+- Contacts
+- Client profile
+
+## PHASE 3
+
+Projects:
+
+- Projects
+- Statuses
+- Milestones
+- Documents
+- Agreements
+- Closure workflow
+
+## PHASE 4
+
+Finance:
+
+- Income
+- Expenses
+- Payments
+- Invoices
+- Approval workflow
+
+## PHASE 5
+
+Recurring:
+
+- MRR
+- Recurring expenses
+
+## PHASE 6
+
+Dashboard:
+
+- Revenue
+- Expenses
+- Profit
+- MRR
+- Receivables
+- Cash flow
+- Charts
+
+## PHASE 7
+
+Reports:
+
+- Financial reports
+- Project reports
+- Client reports
+
+## PHASE 8
+
+PWA:
+
+- Installability
+- Mobile UX
+- Icons
+- Manifest
+- Service worker
+
+## PHASE 9
+
+Security:
+
+- RLS
+- Authorization
+- Audit logs
+- File security
+
+## PHASE 10
+
+Testing:
+
+- Unit
+- Integration
+- End-to-end
+- Responsive testing
+
+---
+
+# 69. DO NOT BUILD THESE IN V1
+
+Do NOT add:
+
+- AI
+- AI chatbot
+- AI financial advisor
+- Complex GST engine
+- Full double-entry accounting
+- Payroll
+- Inventory
+- HR management
+- CRM email automation
+- WhatsApp automation
+- Complex offline accounting
+- Cryptocurrency
+- Stock management
+- Complex tax calculations
+- Unnecessary third-party integrations
+
+The system should stay focused.
+
+---
+
+# 70. FUTURE-READY ARCHITECTURE
+
+Even though these aren't V1 features, architect so these can be added later:
+
+- GST integration
+- Razorpay
+- Stripe
+- Banking integrations
+- Email
+- WhatsApp
+- Calendar
+- Google Drive
+- Microsoft 365
+- Advanced accounting
+- Payroll
+- Vendor management
+- Customer portal
+- Employee portal
+
+Do not implement them unless required.
+
+---
+
+# 71. CUSTOMER/CLIENT PORTAL — FUTURE
+
+Do not build initially, but keep architecture extensible.
+
+Future clients could login and see:
+
+```text
+Projects
+Invoices
+Payments
+Documents
+Agreements
+Project status
+```
+
+---
+
+# 72. FINAL UX REQUIREMENT
+
+At any point, the user should be able to understand:
+
+### Where are we getting money from?
+
+Clients / Projects / Revenue.
+
+### Where is money going?
+
+Expenses / Vendors / Categories.
+
+### What do clients owe us?
+
+Receivables.
+
+### What do we owe?
+
+Payables.
+
+### What is recurring?
+
+MRR / Recurring expenses.
+
+### What projects are active?
+
+Projects.
+
+### What projects can be closed?
+
+Projects satisfying closure requirements.
+
+### Why did we spend this money?
+
+Expense description + category + proof.
+
+### Who approved it?
+
+Audit trail.
+
+### Where is the agreement?
+
+Project documents.
+
+---
+
+# 73. DEFINITION OF DONE
+
+The project is NOT complete merely because pages exist.
+
+It is complete only when:
+
+- Authentication works
+- Roles work
+- Permissions work
+- Database is properly structured
+- Clients work
+- Projects work
+- Agreements work
+- Project closure rules work
+- Income works
+- Expenses work
+- Expense approval works
+- Payments work
+- MRR works
+- Recurring expenses work
+- Dashboard calculations are accurate
+- Reports work
+- Documents are secure
+- Audit logs work
+- Mobile UI works
+- Tablet UI works
+- Desktop UI works
+- PWA installation works
+- Error states work
+- Loading states work
+- Empty states work
+- Tests pass
+- Production build succeeds
+
+---
+
+# 74. MOST IMPORTANT IMPLEMENTATION INSTRUCTION
+
+Do not build fake functionality.
+
+Do not use hard-coded dashboard numbers.
+
+Do not create buttons that do nothing.
+
+Do not create fake upload functionality.
+
+Do not simulate database persistence with local state.
+
+Do not create mock authentication for the final application.
+
+Every important action must actually persist to the database.
+
+Every dashboard figure must come from real database data.
+
+Every permission must actually be enforced.
+
+Every uploaded document must actually be stored securely.
+
+Every financial calculation must be deterministic and tested.
+
+---
+
+# 75. FINAL PRODUCT
+
+The final product should feel like:
+
+> **A lightweight internal operating system for Clickfield AI.**
+
+Not:
+
+> A complicated accounting application.
+
+Not:
+
+> A generic CRM.
+
+Not:
+
+> A spreadsheet.
+
+The experience should be:
+
+```text
+Open Clickfield OS
+        ↓
+See company financial health
+        ↓
+Manage clients
+        ↓
+Manage projects
+        ↓
+Store agreements
+        ↓
+Track income
+        ↓
+Track expenses
+        ↓
+Approve payments
+        ↓
+Track MRR
+        ↓
+Understand profit
+        ↓
+Close projects properly
+        ↓
+Know exactly where the company's money went
+```
+
+Build the application production-ready, maintainable, secure, responsive and scalable while keeping the user experience extremely simple.
