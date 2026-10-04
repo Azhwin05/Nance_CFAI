@@ -74,7 +74,8 @@ export function RecordPayment({
         <DialogHeader>
           <DialogTitle>Record a payment</DialogTitle>
           <DialogDescription>
-            This updates the invoice balance and receivables.
+            This records the receipt as income too — the invoice balance,
+            revenue and dashboard all update together.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">

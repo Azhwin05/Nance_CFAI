@@ -104,10 +104,12 @@ export function AppShell({
   user,
   children,
   preview = false,
+  unreadCount = 0,
 }: {
   user: CurrentUser
   children: React.ReactNode
   preview?: boolean
+  unreadCount?: number
 }) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = React.useState(false)
@@ -156,10 +158,22 @@ export function AppShell({
             <ThemeToggle />
             <Link
               href="/notifications"
-              aria-label="Notifications"
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
+              aria-label={
+                unreadCount > 0
+                  ? `Notifications (${unreadCount} unread)`
+                  : "Notifications"
+              }
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "icon" }),
+                "relative"
+              )}
             >
               <Icon name="Bell" className="size-4" />
+              {unreadCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-4 text-primary-foreground">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </Link>
             <UserMenu user={user} />
           </div>

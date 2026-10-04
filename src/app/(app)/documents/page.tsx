@@ -1,15 +1,33 @@
 import type { Metadata } from "next"
-import { ComingSoon } from "@/components/shared/coming-soon"
+import { requirePermission, getCurrentUser, userCan } from "@/lib/auth/session"
+import { listDocuments, getDocumentFormData } from "@/lib/documents"
+import { PageHeader } from "@/components/shared/page-header"
+import { DocumentHub } from "@/components/documents/document-hub"
 
 export const metadata: Metadata = { title: "Documents" }
 
-export default function Page() {
+export default async function DocumentsPage() {
+  await requirePermission("documents.view")
+  const user = await getCurrentUser()
+  const canManage = userCan(user, "documents.manage")
+
+  const [rows, formData] = await Promise.all([
+    listDocuments(),
+    getDocumentFormData(),
+  ])
+
   return (
-    <ComingSoon
-      title="Documents"
-      description="Centralized, private document store."
-      phase="Phase 3"
-      icon="FolderOpen"
-    />
+    <div>
+      <PageHeader
+        title="Documents"
+        description="Agreements, quotations, invoices and proofs — stored privately."
+      />
+      <DocumentHub
+        rows={rows}
+        clients={formData.clients}
+        projects={formData.projects}
+        canManage={canManage}
+      />
+    </div>
   )
 }

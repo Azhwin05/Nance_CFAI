@@ -8,12 +8,12 @@ export const metadata: Metadata = { title: "New Invoice" }
 
 export default async function NewInvoicePage() {
   await requirePermission("invoices.manage")
-  const { clients, projects } = await getInvoiceFormData()
+  const { clients, projects, methods } = await getInvoiceFormData()
 
   return (
     <div className="mx-auto max-w-3xl">
       <PageHeader title="New Invoice" description="Create an invoice for a client." />
-      <InvoiceForm clients={clients} projects={projects} />
+      <InvoiceForm clients={clients} projects={projects} methods={methods} />
     </div>
   )
 }

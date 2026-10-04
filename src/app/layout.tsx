@@ -3,6 +3,7 @@ import { Inter, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
 import { Toaster } from "@/components/ui/sonner"
+import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register"
 
 const inter = Inter({
   variable: "--font-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground min-h-full flex flex-col">
         <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
+        <ServiceWorkerRegister />
       </body>
     </html>
   )

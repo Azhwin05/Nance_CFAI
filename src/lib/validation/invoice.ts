@@ -24,6 +24,11 @@ export const invoiceCreateSchema = z.object({
     }, "Enter a valid amount greater than 0"),
   tax: money.optional(),
   notes: z.string().trim().max(1000).optional(),
+  // Optional one-step "bill + collect": mark the invoice fully paid on create,
+  // which also records the matching income.
+  markPaid: z.boolean().optional(),
+  paidMethodId: z.string().uuid().optional().nullable(),
+  paidOn: z.string().optional().nullable(),
 })
 
 export type InvoiceCreateInput = z.infer<typeof invoiceCreateSchema>

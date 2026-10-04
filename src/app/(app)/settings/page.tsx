@@ -1,15 +1,43 @@
 import type { Metadata } from "next"
-import { ComingSoon } from "@/components/shared/coming-soon"
+import { requireUser, userCan } from "@/lib/auth/session"
+import {
+  getCompanySettings,
+  listPaymentMethods,
+  listExpenseCategories,
+  listUsersWithRoles,
+} from "@/lib/settings"
+import { PageHeader } from "@/components/shared/page-header"
+import { SettingsPanels } from "@/components/settings/settings-panels"
 
 export const metadata: Metadata = { title: "Settings" }
 
-export default function Page() {
+export default async function SettingsPage() {
+  const user = await requireUser()
+  const canEditCompany =
+    user.roles.includes("super_admin") || user.roles.includes("admin")
+  const canManageFinance = userCan(user, "income.manage")
+
+  const [company, methods, categories, users] = await Promise.all([
+    getCompanySettings(),
+    listPaymentMethods(),
+    listExpenseCategories(),
+    listUsersWithRoles(),
+  ])
+
   return (
-    <ComingSoon
-      title="Settings"
-      description="Company, users, finance and security settings."
-      phase="Phase 9"
-      icon="Settings"
-    />
+    <div>
+      <PageHeader
+        title="Settings"
+        description="Company profile, finance lookups, users and system preferences."
+      />
+      <SettingsPanels
+        company={company}
+        methods={methods}
+        categories={categories}
+        users={users}
+        canEditCompany={canEditCompany}
+        canManageFinance={canManageFinance}
+      />
+    </div>
   )
 }

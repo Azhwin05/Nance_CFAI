@@ -21,12 +21,21 @@ export default async function InvoicesPage() {
         title="Invoices"
         description="Issue and track invoices and receivables."
         actions={
-          canAdd ? (
-            <Link href="/finance/invoices/new" className={buttonVariants({ size: "sm" })}>
-              <Icon name="Plus" className="size-4" />
-              New Invoice
+          <div className="flex items-center gap-2">
+            <Link
+              href="/finance/payments"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              <Icon name="CreditCard" className="size-4" />
+              Payments
             </Link>
-          ) : null
+            {canAdd && (
+              <Link href="/finance/invoices/new" className={buttonVariants({ size: "sm" })}>
+                <Icon name="Plus" className="size-4" />
+                New Invoice
+              </Link>
+            )}
+          </div>
         }
       />
       <InvoiceList rows={rows} />

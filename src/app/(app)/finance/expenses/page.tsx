@@ -21,15 +21,24 @@ export default async function ExpensesPage() {
         title="Expenses"
         description="Submit, track and approve company expenses."
         actions={
-          canAdd ? (
+          <div className="flex items-center gap-2">
             <Link
-              href="/finance/expenses/new"
-              className={buttonVariants({ size: "sm" })}
+              href="/finance/recurring"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
             >
-              <Icon name="Plus" className="size-4" />
-              Add Expense
+              <Icon name="CalendarClock" className="size-4" />
+              Recurring
             </Link>
-          ) : null
+            {canAdd && (
+              <Link
+                href="/finance/expenses/new"
+                className={buttonVariants({ size: "sm" })}
+              >
+                <Icon name="Plus" className="size-4" />
+                Add Expense
+              </Link>
+            )}
+          </div>
         }
       />
       <ExpenseList rows={rows} />
