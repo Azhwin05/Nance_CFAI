@@ -1,15 +1,35 @@
 import type { Metadata } from "next"
-import { ComingSoon } from "@/components/shared/coming-soon"
+import Link from "next/link"
+import { requirePermission, getCurrentUser, userCan } from "@/lib/auth/session"
+import { listLeads } from "@/lib/leads"
+import { PageHeader } from "@/components/shared/page-header"
+import { LeadBoard } from "@/components/leads/lead-board"
+import { buttonVariants } from "@/components/ui/button"
+import { Icon } from "@/components/shared/icon"
 
 export const metadata: Metadata = { title: "Leads" }
 
-export default function Page() {
+export default async function LeadsPage() {
+  await requirePermission("leads.view")
+  const user = await getCurrentUser()
+  const rows = await listLeads()
+  const canAdd = userCan(user, "leads.manage")
+
   return (
-    <ComingSoon
-      title="Leads"
-      description="Sales pipeline from first contact to won."
-      phase="Phase 2"
-      icon="Target"
-    />
+    <div>
+      <PageHeader
+        title="Leads"
+        description="Your sales pipeline from first contact to won."
+        actions={
+          canAdd ? (
+            <Link href="/leads/new" className={buttonVariants({ size: "sm" })}>
+              <Icon name="Plus" className="size-4" />
+              Add Lead
+            </Link>
+          ) : null
+        }
+      />
+      <LeadBoard rows={rows} />
+    </div>
   )
 }
