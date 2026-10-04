@@ -5,7 +5,35 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
-const Select = SelectPrimitive.Root
+/**
+ * Collect value → label from the <SelectItem> elements nested in `children`.
+ * Base UI only knows an option's label once its popup has been opened, so a
+ * closed select would otherwise show the raw value (a UUID, or "__none__").
+ * Giving Root an `items` map up front makes the trigger show the label.
+ */
+function collectItems(children: React.ReactNode): Record<string, React.ReactNode> {
+  const items: Record<string, React.ReactNode> = {}
+  const walk = (nodes: React.ReactNode) => {
+    React.Children.forEach(nodes, (child) => {
+      if (!React.isValidElement(child)) return
+      const props = child.props as { value?: unknown; children?: React.ReactNode }
+      if (child.type === SelectItem) {
+        if (typeof props.value === "string") items[props.value] = props.children
+      } else if (props.children) {
+        walk(props.children)
+      }
+    })
+  }
+  walk(children)
+  return items
+}
+
+function Select<Value, Multiple extends boolean | undefined = false>(
+  props: SelectPrimitive.Root.Props<Value, Multiple>
+) {
+  const items = props.items ?? collectItems(props.children)
+  return <SelectPrimitive.Root {...props} items={items} />
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (

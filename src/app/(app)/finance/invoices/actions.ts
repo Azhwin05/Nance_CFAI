@@ -97,7 +97,7 @@ export async function createInvoice(
   const subtotal = paiseFromInput(v.subtotal)
   const tax = v.tax ? paiseFromInput(v.tax) : 0
   const total = addPaise(subtotal, tax)
-  const number = await nextCode("INV", "invoices")
+  const number = await nextCode("INV", "invoices", "number")
 
   const { data, error } = await supabase
     .from("invoices")

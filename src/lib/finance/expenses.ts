@@ -101,16 +101,32 @@ export async function getExpenseFormData() {
   }
 }
 
-/** Generate the next sequential code like EXP-001 for a table with a `code`. */
-export async function nextCode(prefix: string, table: string): Promise<string> {
+/**
+ * Generate the next sequential code like EXP-001 / INV-002.
+ *
+ * `column` is the table's identifier column — "code" for most tables but
+ * "number" for invoices. The highest existing number is found numerically (not
+ * by string order, which would rank INV-999 above INV-1000), and a failed
+ * lookup throws rather than silently restarting at 001 and colliding with an
+ * existing record.
+ */
+export async function nextCode(
+  prefix: string,
+  table: string,
+  column: string = "code"
+): Promise<string> {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from(table as "expenses")
-    .select("code")
-    .ilike("code", `${prefix}-%`)
-    .order("code", { ascending: false })
-    .limit(1)
-  const last = (data?.[0] as { code?: string } | undefined)?.code
-  const n = last ? parseInt(last.split("-")[1] ?? "0", 10) || 0 : 0
-  return `${prefix}-${String(n + 1).padStart(3, "0")}`
+    .select(column)
+    .ilike(column, `${prefix}-%`)
+    .limit(10000)
+  if (error) throw new Error(`Couldn't generate the next ${prefix} number: ${error.message}`)
+
+  let max = 0
+  for (const row of (data ?? []) as unknown as Record<string, string | null>[]) {
+    const n = parseInt((row[column] ?? "").split("-")[1] ?? "0", 10)
+    if (Number.isFinite(n) && n > max) max = n
+  }
+  return `${prefix}-${String(max + 1).padStart(3, "0")}`
 }
